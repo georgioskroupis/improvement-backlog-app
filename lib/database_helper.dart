@@ -53,6 +53,7 @@ class DatabaseHelper {
       // Insert sample items
       final sampleItems = [
         ImprovementItem(
+          id: 1,
           title: 'Sample Item 1',
           impactLevel: 'high',
           champion: 'Champion 1',
@@ -62,6 +63,7 @@ class DatabaseHelper {
           feeling: 'happy',
         ),
         ImprovementItem(
+          id: 2,
           title: 'Sample Item 2',
           impactLevel: 'medium',
           champion: 'Champion 2',
@@ -71,6 +73,7 @@ class DatabaseHelper {
           feeling: 'neutral',
         ),
         ImprovementItem(
+          id: 3,
           title: 'Sample Item 3',
           impactLevel: 'low',
           champion: 'Champion 3',
@@ -80,6 +83,7 @@ class DatabaseHelper {
           feeling: 'sad',
         ),
         ImprovementItem(
+          id: 4,
           title: 'Sample Item 4',
           impactLevel: 'high',
           champion: 'Champion 4',
@@ -89,6 +93,7 @@ class DatabaseHelper {
           feeling: 'happy',
         ),
         ImprovementItem(
+          id: 5,
           title: 'Sample Item 5',
           impactLevel: 'medium',
           champion: 'Champion 5',
@@ -111,6 +116,7 @@ class DatabaseHelper {
 
     return List.generate(maps.length, (i) {
       return ImprovementItem(
+        id: maps[i]['id'],
         title: maps[i]['title'],
         impactLevel: maps[i]['impactLevel'],
         champion: maps[i]['champion'],
@@ -126,11 +132,22 @@ class DatabaseHelper {
     final db = await database;
     await db.insert('improvement_items', item.toMap());
   }
+
+  Future<void> updateImprovementItem(ImprovementItem item) async {
+    final db = await database;
+    await db.update(
+      'improvement_items',
+      item.toMap(),
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
+  }
 }
 
 extension ImprovementItemMap on ImprovementItem {
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'title': title,
       'impactLevel': impactLevel,
       'champion': champion,

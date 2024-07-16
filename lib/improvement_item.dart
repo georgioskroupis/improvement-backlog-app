@@ -1,5 +1,6 @@
 // lib/improvement_item.dart
 class ImprovementItem {
+  final int? id;
   final String title;
   final String impactLevel;
   final String champion;
@@ -9,6 +10,7 @@ class ImprovementItem {
   final String feeling;
 
   ImprovementItem({
+    this.id,
     required this.title,
     required this.impactLevel,
     required this.champion,
@@ -20,6 +22,7 @@ class ImprovementItem {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'title': title,
       'impactLevel': impactLevel,
       'champion': champion,

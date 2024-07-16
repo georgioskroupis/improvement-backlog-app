@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'improvement_item.dart';
+import 'detail_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -89,10 +90,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final item = items[index];
-                      return ListItem(
-                        title: item.title,
-                        feeling: item.feeling,
-                        champion: item.champion,
+                      return ListTile(
+                        title: Text(item.title),
+                        subtitle: Text(item.feeling),
+                        trailing: Text(item.champion),
+                        onTap: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailPage(item: item),
+                            ),
+                          );
+                          if (result == true) {
+                            setState(() {
+                              _improvementItems =
+                                  DatabaseHelper().getImprovementItems();
+                            });
+                          }
+                        },
                       );
                     },
                   );
@@ -100,34 +115,6 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class ListItem extends StatelessWidget {
-  final String title;
-  final String feeling;
-  final String champion;
-
-  const ListItem({
-    super.key,
-    required this.title,
-    required this.feeling,
-    required this.champion,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(child: Text(title)),
-          Expanded(child: Text(feeling, textAlign: TextAlign.center)),
-          Expanded(child: Text(champion, textAlign: TextAlign.right)),
         ],
       ),
     );
