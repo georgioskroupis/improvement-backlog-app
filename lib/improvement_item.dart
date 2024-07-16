@@ -1,6 +1,6 @@
 // lib/improvement_item.dart
 class ImprovementItem {
-  final int? id;
+  final int id;
   final String title;
   final String impactLevel;
   final String champion;
@@ -10,7 +10,7 @@ class ImprovementItem {
   final String feeling;
 
   ImprovementItem({
-    this.id,
+    required this.id,
     required this.title,
     required this.impactLevel,
     required this.champion,
@@ -19,6 +19,28 @@ class ImprovementItem {
     required this.outcome,
     required this.feeling,
   });
+
+  ImprovementItem copyWith({
+    int? id,
+    String? title,
+    String? impactLevel,
+    String? champion,
+    String? issue,
+    String? improvement,
+    String? outcome,
+    String? feeling,
+  }) {
+    return ImprovementItem(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      impactLevel: impactLevel ?? this.impactLevel,
+      champion: champion ?? this.champion,
+      issue: issue ?? this.issue,
+      improvement: improvement ?? this.improvement,
+      outcome: outcome ?? this.outcome,
+      feeling: feeling ?? this.feeling,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {

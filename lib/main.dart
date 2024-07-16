@@ -53,7 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
                 Expanded(
                     child: Text('Title',
@@ -91,9 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemBuilder: (context, index) {
                       final item = items[index];
                       return ListTile(
-                        title: Text(item.title),
-                        subtitle: Text(item.feeling),
-                        trailing: Text(item.champion),
                         onTap: () async {
                           final result = await Navigator.push(
                             context,
@@ -108,6 +104,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             });
                           }
                         },
+                        title: Row(
+                          children: [
+                            Expanded(
+                                child: Text(item.title,
+                                    style: TextStyle(fontSize: 16))),
+                            Expanded(
+                                child: Text(item.feeling,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16))),
+                            Expanded(
+                                child: Text(item.champion,
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(fontSize: 16))),
+                          ],
+                        ),
                       );
                     },
                   );
@@ -116,6 +127,34 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final newId = (await DatabaseHelper().getNextId()) + 1;
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailPage(
+                item: ImprovementItem(
+                  id: newId,
+                  title: '',
+                  impactLevel: '',
+                  champion: '',
+                  issue: '',
+                  improvement: '',
+                  outcome: '',
+                  feeling: '',
+                ),
+              ),
+            ),
+          );
+          if (result == true) {
+            setState(() {
+              _improvementItems = DatabaseHelper().getImprovementItems();
+            });
+          }
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

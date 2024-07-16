@@ -60,7 +60,15 @@ class _DetailPageState extends State<DetailPage> {
         outcome: _outcomeController.text,
         feeling: _feelingController.text,
       );
-      await DatabaseHelper().updateImprovementItem(updatedItem);
+
+      final exists =
+          await DatabaseHelper().improvementItemExists(widget.item.id!);
+      if (exists) {
+        await DatabaseHelper().updateImprovementItem(updatedItem);
+      } else {
+        await DatabaseHelper().insertImprovementItem(updatedItem);
+      }
+
       Navigator.pop(context, true);
     }
   }

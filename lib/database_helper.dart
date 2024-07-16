@@ -110,6 +110,23 @@ class DatabaseHelper {
     }
   }
 
+  Future<int> getNextId() async {
+    final db = await database;
+    final result =
+        await db.rawQuery('SELECT MAX(id) as id FROM improvement_items');
+    return result.first['id'] != null ? result.first['id'] as int : 0;
+  }
+
+  Future<bool> improvementItemExists(int id) async {
+    final db = await database;
+    final result = await db.query(
+      'improvement_items',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return result.isNotEmpty;
+  }
+
   Future<List<ImprovementItem>> getImprovementItems() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('improvement_items');
