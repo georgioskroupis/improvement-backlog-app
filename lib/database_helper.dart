@@ -1,4 +1,3 @@
-// lib/database_helper.dart
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'improvement_item.dart';
@@ -24,33 +23,47 @@ class DatabaseHelper {
       path,
       version: 1,
       onCreate: _onCreate,
+      onOpen: (db) async {
+        // Force recreate tables for development
+        await db.execute('DROP TABLE IF EXISTS improvement_items');
+        await db.execute('DROP TABLE IF EXISTS moods');
+        await _onCreate(db, 1);
+      },
     );
   }
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE improvement_items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        impactLevel TEXT,
-        champion TEXT,
-        issue TEXT,
-        improvement TEXT,
-        outcome TEXT,
-        feeling TEXT
-      )
-    ''');
+    CREATE TABLE improvement_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT,
+      impactLevel TEXT,
+      champion TEXT,
+      issue TEXT,
+      improvement TEXT,
+      outcome TEXT,
+      feeling TEXT
+    )
+  ''');
+
+    await db.execute('''
+    CREATE TABLE moods (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      improvement_item_id INTEGER,
+      mood TEXT,
+      timestamp TEXT,
+      FOREIGN KEY (improvement_item_id) REFERENCES improvement_items (id) ON DELETE CASCADE
+    )
+  ''');
 
     // Insert sample data for development
     await _insertSampleData(db);
   }
 
   Future<void> _insertSampleData(Database db) async {
-    // Check if table is empty
     final count = Sqflite.firstIntValue(
         await db.rawQuery('SELECT COUNT(*) FROM improvement_items'));
     if (count == 0) {
-      // Insert sample items
       final sampleItems = [
         ImprovementItem(
           id: 1,
@@ -82,30 +95,80 @@ class DatabaseHelper {
           outcome: 'Outcome 3',
           feeling: 'sad',
         ),
-        ImprovementItem(
-          id: 4,
-          title: 'Sample Item 4',
-          impactLevel: 'high',
-          champion: 'Champion 4',
-          issue: 'Issue 4',
-          improvement: 'Improvement 4',
-          outcome: 'Outcome 4',
-          feeling: 'happy',
-        ),
-        ImprovementItem(
-          id: 5,
-          title: 'Sample Item 5',
-          impactLevel: 'medium',
-          champion: 'Champion 5',
-          issue: 'Issue 5',
-          improvement: 'Improvement 5',
-          outcome: 'Outcome 5',
-          feeling: 'neutral',
-        ),
       ];
 
       for (var item in sampleItems) {
         await db.insert('improvement_items', item.toMap());
+      }
+
+      final sampleMoods = [
+        {
+          'improvement_item_id': 1,
+          'mood': 'positive',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 5, hours: 10))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 1,
+          'mood': 'neutral',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 5, hours: 5))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 1,
+          'mood': 'negative',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 3))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 2,
+          'mood': 'neutral',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 7))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 2,
+          'mood': 'positive',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 4, hours: 8))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 2,
+          'mood': 'negative',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 4, hours: 2))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 3,
+          'mood': 'negative',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 6))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 3,
+          'mood': 'neutral',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 4, hours: 10))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 3,
+          'mood': 'positive',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 4, hours: 4))
+              .toIso8601String(),
+        },
+      ];
+
+      for (var mood in sampleMoods) {
+        await db.insert('moods', mood);
       }
     }
   }
@@ -145,9 +208,9 @@ class DatabaseHelper {
     });
   }
 
-  Future<void> insertImprovementItem(ImprovementItem item) async {
+  Future<int> insertImprovementItem(ImprovementItem item) async {
     final db = await database;
-    await db.insert('improvement_items', item.toMap());
+    return await db.insert('improvement_items', item.toMap());
   }
 
   Future<void> updateImprovementItem(ImprovementItem item) async {
@@ -157,6 +220,24 @@ class DatabaseHelper {
       item.toMap(),
       where: 'id = ?',
       whereArgs: [item.id],
+    );
+  }
+
+  Future<void> insertMood(int improvementItemId, String mood) async {
+    final db = await database;
+    await db.insert('moods', {
+      'improvement_item_id': improvementItemId,
+      'mood': mood,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getMoods(int improvementItemId) async {
+    final db = await database;
+    return await db.query(
+      'moods',
+      where: 'improvement_item_id = ?',
+      whereArgs: [improvementItemId],
     );
   }
 }
