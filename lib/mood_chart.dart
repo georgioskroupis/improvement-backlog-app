@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'mood.dart';
+import 'moods_list.dart';
 
 class MoodChart extends StatelessWidget {
   final int improvementItemId;
@@ -19,6 +20,8 @@ class MoodChart extends StatelessWidget {
           return const CircularProgressIndicator();
         }
         final dataPoints = _createData(moods);
+        final dataPointDates =
+            dataPoints.map((e) => e.x).toSet(); // Collecting x values
 
         return LineChart(
           LineChartData(
@@ -53,7 +56,6 @@ class MoodChart extends StatelessWidget {
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  interval: 86400000, // Interval set to one day in milliseconds
                   getTitlesWidget: (value, meta) {
                     final date =
                         DateTime.fromMillisecondsSinceEpoch(value.toInt());
@@ -76,6 +78,23 @@ class MoodChart extends StatelessWidget {
                 belowBarData: BarAreaData(show: false),
               ),
             ],
+            lineTouchData: LineTouchData(
+              touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
+                if (event is FlTapUpEvent &&
+                    response != null &&
+                    response.lineBarSpots != null) {
+                  final spot = response.lineBarSpots!.first;
+                  final date =
+                      DateTime.fromMillisecondsSinceEpoch(spot.x.toInt());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MoodsList(date: date),
+                    ),
+                  );
+                }
+              },
+            ),
           ),
         );
       },
