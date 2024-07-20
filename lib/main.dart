@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'improvement_item.dart';
 import 'detail_page.dart';
+import 'mood.dart';
+import 'mini_mood_chart.dart';
 
 void main() {
   runApp(const MyApp());
@@ -105,9 +107,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: Text(item.title,
                                     style: const TextStyle(fontSize: 16))),
                             Expanded(
-                                child: Text(item.feeling,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 16))),
+                              child: FutureBuilder<List<Map<String, dynamic>>>(
+                                future:
+                                    DatabaseHelper().getMoods(item.id ?? -1),
+                                builder: (context, moodSnapshot) {
+                                  if (moodSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (moodSnapshot.hasError) {
+                                    return Center(
+                                        child: Text(
+                                            'Error: ${moodSnapshot.error}'));
+                                  } else if (!moodSnapshot.hasData ||
+                                      moodSnapshot.data!.isEmpty) {
+                                    return const Center(child: Text('No data'));
+                                  } else {
+                                    final moods = moodSnapshot.data!
+                                        .map((e) => Mood.fromMap(e))
+                                        .toList();
+                                    return MiniMoodChart(moods: moods);
+                                  }
+                                },
+                              ),
+                            ),
                             Expanded(
                                 child: Text(item.champion,
                                     textAlign: TextAlign.right,
