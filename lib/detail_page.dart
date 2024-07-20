@@ -217,8 +217,10 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(
                 height: 200,
                 child: MoodChart(
-                    improvementItemId: _isNewItem ? _tempId : widget.item.id,
-                    moods: _moods),
+                  improvementItemId: _isNewItem ? _tempId : widget.item.id,
+                  moods: _moods,
+                  reloadMoodsCallback: _loadMoods,
+                ),
               ),
             ],
           ),

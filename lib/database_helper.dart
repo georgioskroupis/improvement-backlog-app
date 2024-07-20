@@ -120,14 +120,28 @@ class DatabaseHelper {
           'improvement_item_id': 1,
           'mood': 'negative',
           'timestamp': DateTime.now()
-              .subtract(const Duration(days: 3))
+              .subtract(const Duration(days: 5, hours: 1))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 1,
+          'mood': 'positive',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 3, hours: 6))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 1,
+          'mood': 'neutral',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 3, hours: 3))
               .toIso8601String(),
         },
         {
           'improvement_item_id': 2,
           'mood': 'neutral',
           'timestamp': DateTime.now()
-              .subtract(const Duration(days: 7))
+              .subtract(const Duration(days: 7, hours: 8))
               .toIso8601String(),
         },
         {
@@ -145,10 +159,17 @@ class DatabaseHelper {
               .toIso8601String(),
         },
         {
+          'improvement_item_id': 2,
+          'mood': 'positive',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 4, hours: 1))
+              .toIso8601String(),
+        },
+        {
           'improvement_item_id': 3,
           'mood': 'negative',
           'timestamp': DateTime.now()
-              .subtract(const Duration(days: 6))
+              .subtract(const Duration(days: 6, hours: 9))
               .toIso8601String(),
         },
         {
@@ -163,6 +184,13 @@ class DatabaseHelper {
           'mood': 'positive',
           'timestamp': DateTime.now()
               .subtract(const Duration(days: 4, hours: 4))
+              .toIso8601String(),
+        },
+        {
+          'improvement_item_id': 3,
+          'mood': 'negative',
+          'timestamp': DateTime.now()
+              .subtract(const Duration(days: 4, hours: 2))
               .toIso8601String(),
         },
       ];

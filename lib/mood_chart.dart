@@ -7,9 +7,14 @@ import 'moods_list.dart';
 class MoodChart extends StatelessWidget {
   final int improvementItemId;
   final List<Mood> moods;
+  final Function reloadMoodsCallback;
 
-  const MoodChart(
-      {super.key, required this.improvementItemId, required this.moods});
+  const MoodChart({
+    super.key,
+    required this.improvementItemId,
+    required this.moods,
+    required this.reloadMoodsCallback,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +33,7 @@ class MoodChart extends StatelessWidget {
             minY: 1,
             maxY: 3,
             baselineY: 0,
-            gridData: FlGridData(
+            gridData: const FlGridData(
               show: false, // Hide grid lines
             ),
             titlesData: FlTitlesData(
@@ -91,7 +96,9 @@ class MoodChart extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => MoodsList(date: date),
                     ),
-                  );
+                  ).then((_) {
+                    reloadMoodsCallback(); // Call the reloadMoodsCallback when returning
+                  });
                 }
               },
             ),
