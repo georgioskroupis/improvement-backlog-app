@@ -25,82 +25,80 @@ class MoodChart extends StatelessWidget {
           return const CircularProgressIndicator();
         }
         final dataPoints = _createData(moods);
-        final dataPointDates =
-            dataPoints.map((e) => e.x).toSet(); // Collecting x values
 
-        return LineChart(
-          LineChartData(
-            minY: 1,
-            maxY: 3,
-            baselineY: 0,
-            gridData: const FlGridData(
-              show: false, // Hide grid lines
-            ),
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  interval: 1,
-                  getTitlesWidget: (value, meta) {
-                    switch (value.toInt()) {
-                      case 1:
-                        return const Text('1');
-                      case 2:
-                        return const Text('2');
-                      case 3:
-                        return const Text('3');
-                      default:
-                        return Container();
-                    }
-                  },
+        return Padding(
+          padding:
+              const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 64.0), // Add margins
+          child: LineChart(
+            LineChartData(
+              minY: 1,
+              maxY: 3,
+              baselineY: 0,
+              gridData: const FlGridData(
+                show: false, // Hide grid lines
+              ),
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 1,
+                    getTitlesWidget: (value, meta) {
+                      switch (value.toInt()) {
+                        case 1:
+                          return const Text('😢');
+                        case 2:
+                          return const Text('😐');
+                        case 3:
+                          return const Text('😊');
+                        default:
+                          return Container();
+                      }
+                    },
+                  ),
+                ),
+                rightTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                bottomTitles: const AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide bottom titles
+                  ),
+                ),
+                topTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
                 ),
               ),
-              rightTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
+              borderData: FlBorderData(show: true),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: dataPoints,
+                  isCurved: true,
+                  color: Colors.blue,
+                  barWidth: 2,
+                  isStrokeCapRound: true,
+                  belowBarData: BarAreaData(show: false),
+                ),
+              ],
+              lineTouchData: LineTouchData(
+                touchCallback:
+                    (FlTouchEvent event, LineTouchResponse? response) {
+                  if (event is FlTapUpEvent &&
+                      response != null &&
+                      response.lineBarSpots != null) {
+                    final spot = response.lineBarSpots!.first;
                     final date =
-                        DateTime.fromMillisecondsSinceEpoch(value.toInt());
-                    return Text('${date.day}/${date.month}');
-                  },
-                ),
+                        DateTime.fromMillisecondsSinceEpoch(spot.x.toInt());
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MoodsList(date: date),
+                      ),
+                    ).then((_) {
+                      reloadMoodsCallback(); // Call the reloadMoodsCallback when returning
+                    });
+                  }
+                },
               ),
-              topTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-            ),
-            borderData: FlBorderData(show: true),
-            lineBarsData: [
-              LineChartBarData(
-                spots: dataPoints,
-                isCurved: true,
-                color: Colors.blue,
-                barWidth: 2,
-                isStrokeCapRound: true,
-                belowBarData: BarAreaData(show: false),
-              ),
-            ],
-            lineTouchData: LineTouchData(
-              touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
-                if (event is FlTapUpEvent &&
-                    response != null &&
-                    response.lineBarSpots != null) {
-                  final spot = response.lineBarSpots!.first;
-                  final date =
-                      DateTime.fromMillisecondsSinceEpoch(spot.x.toInt());
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MoodsList(date: date),
-                    ),
-                  ).then((_) {
-                    reloadMoodsCallback(); // Call the reloadMoodsCallback when returning
-                  });
-                }
-              },
             ),
           ),
         );

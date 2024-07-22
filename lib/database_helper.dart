@@ -24,180 +24,177 @@ class DatabaseHelper {
       version: 1,
       onCreate: _onCreate,
       onOpen: (db) async {
-        // Force recreate tables for development
-        await db.execute('DROP TABLE IF EXISTS improvement_items');
-        await db.execute('DROP TABLE IF EXISTS moods');
-        await _onCreate(db, 1);
+        final count = Sqflite.firstIntValue(
+            await db.rawQuery('SELECT COUNT(*) FROM improvement_items'));
+        if (count == 0) {
+          await _onCreate(db, 1);
+        }
       },
     );
   }
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
-    CREATE TABLE improvement_items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT,
-      impactLevel TEXT,
-      champion TEXT,
-      issue TEXT,
-      improvement TEXT,
-      outcome TEXT,
-      feeling TEXT
-    )
-  ''');
+      CREATE TABLE improvement_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        impactLevel TEXT,
+        champion TEXT,
+        issue TEXT,
+        improvement TEXT,
+        outcome TEXT,
+        feeling TEXT
+      )
+    ''');
 
     await db.execute('''
-    CREATE TABLE moods (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      improvement_item_id INTEGER,
-      mood TEXT,
-      timestamp TEXT,
-      FOREIGN KEY (improvement_item_id) REFERENCES improvement_items (id) ON DELETE CASCADE
-    )
-  ''');
+      CREATE TABLE moods (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        improvement_item_id INTEGER,
+        mood TEXT,
+        timestamp TEXT,
+        FOREIGN KEY (improvement_item_id) REFERENCES improvement_items (id) ON DELETE CASCADE
+      )
+    ''');
 
     // Insert sample data for development
     await _insertSampleData(db);
   }
 
   Future<void> _insertSampleData(Database db) async {
-    final count = Sqflite.firstIntValue(
-        await db.rawQuery('SELECT COUNT(*) FROM improvement_items'));
-    if (count == 0) {
-      final sampleItems = [
-        ImprovementItem(
-          id: 1,
-          title: 'Sample Item 1',
-          impactLevel: 'high',
-          champion: 'Champion 1',
-          issue: 'Issue 1',
-          improvement: 'Improvement 1',
-          outcome: 'Outcome 1',
-          feeling: 'happy',
-        ),
-        ImprovementItem(
-          id: 2,
-          title: 'Sample Item 2',
-          impactLevel: 'medium',
-          champion: 'Champion 2',
-          issue: 'Issue 2',
-          improvement: 'Improvement 2',
-          outcome: 'Outcome 2',
-          feeling: 'neutral',
-        ),
-        ImprovementItem(
-          id: 3,
-          title: 'Sample Item 3',
-          impactLevel: 'low',
-          champion: 'Champion 3',
-          issue: 'Issue 3',
-          improvement: 'Improvement 3',
-          outcome: 'Outcome 3',
-          feeling: 'sad',
-        ),
-      ];
+    final sampleItems = [
+      ImprovementItem(
+        id: 1,
+        title: 'Sample Item 1',
+        impactLevel: 'high',
+        champion: 'Champion 1',
+        issue: 'Issue 1',
+        improvement: 'Improvement 1',
+        outcome: 'Outcome 1',
+        feeling: 'happy',
+      ),
+      ImprovementItem(
+        id: 2,
+        title: 'Sample Item 2',
+        impactLevel: 'medium',
+        champion: 'Champion 2',
+        issue: 'Issue 2',
+        improvement: 'Improvement 2',
+        outcome: 'Outcome 2',
+        feeling: 'neutral',
+      ),
+      ImprovementItem(
+        id: 3,
+        title: 'Sample Item 3',
+        impactLevel: 'low',
+        champion: 'Champion 3',
+        issue: 'Issue 3',
+        improvement: 'Improvement 3',
+        outcome: 'Outcome 3',
+        feeling: 'sad',
+      ),
+    ];
 
-      for (var item in sampleItems) {
-        await db.insert('improvement_items', item.toMap());
-      }
+    for (var item in sampleItems) {
+      await db.insert('improvement_items', item.toMap());
+    }
 
-      final sampleMoods = [
-        {
-          'improvement_item_id': 1,
-          'mood': 'positive',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 5, hours: 10))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 1,
-          'mood': 'neutral',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 5, hours: 5))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 1,
-          'mood': 'negative',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 5, hours: 1))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 1,
-          'mood': 'positive',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 3, hours: 6))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 1,
-          'mood': 'neutral',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 3, hours: 3))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 2,
-          'mood': 'neutral',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 7, hours: 8))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 2,
-          'mood': 'positive',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 4, hours: 8))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 2,
-          'mood': 'negative',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 4, hours: 2))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 2,
-          'mood': 'positive',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 4, hours: 1))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 3,
-          'mood': 'negative',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 6, hours: 9))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 3,
-          'mood': 'neutral',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 4, hours: 10))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 3,
-          'mood': 'positive',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 4, hours: 4))
-              .toIso8601String(),
-        },
-        {
-          'improvement_item_id': 3,
-          'mood': 'negative',
-          'timestamp': DateTime.now()
-              .subtract(const Duration(days: 4, hours: 2))
-              .toIso8601String(),
-        },
-      ];
+    final sampleMoods = [
+      {
+        'improvement_item_id': 1,
+        'mood': 'positive',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 5, hours: 10))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 1,
+        'mood': 'neutral',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 5, hours: 5))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 1,
+        'mood': 'negative',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 5, hours: 1))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 1,
+        'mood': 'positive',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 3, hours: 6))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 1,
+        'mood': 'neutral',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 3, hours: 3))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 2,
+        'mood': 'neutral',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 7, hours: 8))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 2,
+        'mood': 'positive',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 4, hours: 8))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 2,
+        'mood': 'negative',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 4, hours: 2))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 2,
+        'mood': 'positive',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 4, hours: 1))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 3,
+        'mood': 'negative',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 6, hours: 9))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 3,
+        'mood': 'neutral',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 4, hours: 10))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 3,
+        'mood': 'positive',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 4, hours: 4))
+            .toIso8601String(),
+      },
+      {
+        'improvement_item_id': 3,
+        'mood': 'negative',
+        'timestamp': DateTime.now()
+            .subtract(const Duration(days: 4, hours: 2))
+            .toIso8601String(),
+      },
+    ];
 
-      for (var mood in sampleMoods) {
-        await db.insert('moods', mood);
-      }
+    for (var mood in sampleMoods) {
+      await db.insert('moods', mood);
     }
   }
 
