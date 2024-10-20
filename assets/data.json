@@ -9,6 +9,26 @@
       {
         "date": "2023-01-01",
         "moods": ["positive", "neutral"]
+      },
+      {
+        "date": "2023-01-05",
+        "moods": ["positive", "positive"]
+      },
+      {
+        "date": "2023-01-10",
+        "moods": ["neutral", "negative"]
+      },
+      {
+        "date": "2023-01-15",
+        "moods": ["positive", "positive", "neutral"]
+      },
+      {
+        "date": "2023-01-20",
+        "moods": ["negative", "neutral"]
+      },
+      {
+        "date": "2023-01-25",
+        "moods": ["positive", "neutral", "positive"]
       }
     ]
   },
@@ -22,6 +42,59 @@
       {
         "date": "2023-01-02",
         "moods": ["positive"]
+      },
+      {
+        "date": "2023-01-06",
+        "moods": ["neutral", "positive"]
+      },
+      {
+        "date": "2023-01-12",
+        "moods": ["negative", "negative"]
+      },
+      {
+        "date": "2023-01-18",
+        "moods": ["positive", "neutral", "neutral"]
+      },
+      {
+        "date": "2023-01-24",
+        "moods": ["positive", "positive", "positive"]
+      },
+      {
+        "date": "2023-01-30",
+        "moods": ["neutral", "negative"]
+      }
+    ]
+  },
+  "item3": {
+    "title": "Enhance Documentation",
+    "champion": "Alice Johnson",
+    "issue": "Project documentation is outdated.",
+    "improvement": "Revise and update all project documentation.",
+    "outcome": "Clear and up-to-date project documentation.",
+    "feelings": [
+      {
+        "date": "2023-01-03",
+        "moods": ["neutral"]
+      },
+      {
+        "date": "2023-01-07",
+        "moods": ["positive", "positive"]
+      },
+      {
+        "date": "2023-01-13",
+        "moods": ["negative", "neutral"]
+      },
+      {
+        "date": "2023-01-19",
+        "moods": ["positive", "neutral"]
+      },
+      {
+        "date": "2023-01-26",
+        "moods": ["neutral", "positive", "negative"]
+      },
+      {
+        "date": "2023-02-01",
+        "moods": ["positive", "positive"]
       }
     ]
   }
