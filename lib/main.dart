@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'views/login_page.dart';
-import 'views/register_page.dart';
 import 'views/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -19,14 +19,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Improvement Backlog App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const LoginPage(), // Set initial page to login
+      home: FirebaseAuth.instance.currentUser != null
+          ? const HomePage()
+          : const LoginPage(),
       routes: {
-        '/register': (context) => const RegisterPage(),
         '/home': (context) => const HomePage(),
+        '/login': (context) => const LoginPage(),
+        // Add other routes here if needed.
       },
     );
   }

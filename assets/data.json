@@ -1,0 +1,28 @@
+{
+  "item1": {
+    "title": "Improve Code Quality",
+    "champion": "John Doe",
+    "issue": "Code is inconsistent across projects.",
+    "improvement": "Implement code linting and formatting.",
+    "outcome": "Consistent code style.",
+    "feelings": [
+      {
+        "date": "2023-01-01",
+        "moods": ["positive", "neutral"]
+      }
+    ]
+  },
+  "item2": {
+    "title": "Optimize Deployment Process",
+    "champion": "Jane Smith",
+    "issue": "Manual deployment is time-consuming.",
+    "improvement": "Set up a CI/CD pipeline.",
+    "outcome": "Automated and faster deployment.",
+    "feelings": [
+      {
+        "date": "2023-01-02",
+        "moods": ["positive"]
+      }
+    ]
+  }
+}

@@ -6,7 +6,7 @@ class ImprovementItem {
   final String issue;
   final String improvement;
   final String outcome;
-  final List<Map<String, dynamic>> feelings; // New field to represent feelings
+  final List<Map<String, dynamic>> feelings;
 
   ImprovementItem({
     this.id,
@@ -16,8 +16,8 @@ class ImprovementItem {
     required this.issue,
     required this.improvement,
     required this.outcome,
-    required this.feelings,
-  });
+    List<Map<String, dynamic>>? feelings,
+  }) : feelings = feelings ?? [];
 
   Map<String, dynamic> toMap() {
     return {
@@ -35,13 +35,17 @@ class ImprovementItem {
   factory ImprovementItem.fromMap(Map<String, dynamic> map) {
     return ImprovementItem(
       id: map['id'],
-      title: map['title'],
-      impactLevel: map['impactLevel'],
-      champion: map['champion'],
-      issue: map['issue'],
-      improvement: map['improvement'],
-      outcome: map['outcome'],
-      feelings: List<Map<String, dynamic>>.from(map['feelings'] ?? []),
+      title: map['title'] ?? '', // Provide default value if null
+      impactLevel: map['impactLevel'] ?? '', // Provide default value if null
+      champion: map['champion'] ?? '', // Provide default value if null
+      issue: map['issue'] ?? '', // Provide default value if null
+      improvement: map['improvement'] ?? '', // Provide default value if null
+      outcome: map['outcome'] ?? '', // Provide default value if null
+      feelings: map['feelings'] != null
+          ? (map['feelings'] as List)
+              .map((feeling) => Map<String, dynamic>.from(feeling))
+              .toList()
+          : [],
     );
   }
 }

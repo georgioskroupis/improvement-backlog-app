@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../controllers/auth_controller.dart';
 import '../utils/validators.dart';
 
@@ -12,16 +13,48 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final AuthController _authController = AuthController();
+  bool _isLoading = false;
 
   String _email = '';
   String _password = '';
 
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthState();
+  }
+
+  void _checkAuthState() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacementNamed(context, '/home');
+      });
+    }
+  }
+
   void _login() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
       _formKey.currentState!.save();
-      await _authController.loginUser(_email, _password);
-      // Navigate to home page after successful login.
-      Navigator.pushNamed(context, '/home');
+
+      try {
+        await _authController.loginUser(_email, _password);
+        // Navigate to home page after successful login.
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -47,10 +80,12 @@ class _LoginPageState extends State<LoginPage> {
                 onSaved: (value) => _password = value!,
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _login,
-                child: const Text('Login'),
-              ),
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: _login,
+                      child: const Text('Login'),
+                    ),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
