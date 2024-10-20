@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "281294955643",
+    "project_id": "improvement-backlog-database",
+    "storage_bucket": "improvement-backlog-database.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:281294955643:android:1ee4ab18a986687d822ede",
+        "android_client_info": {
+          "package_name": "com.thegrid.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTvqB74C0AQlkbVG_kteQqizXcwPFhf0E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
