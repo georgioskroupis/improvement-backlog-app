@@ -62,9 +62,10 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                   chart: SizedBox(
-                    height: 200.0,
+                    height: 100.0,
                     child: MoodChart(
                       feelings: item.feelings,
+                      isCompact: true, // Compact version for home page
                     ),
                   ),
                 );

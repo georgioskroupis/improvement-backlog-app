@@ -179,7 +179,13 @@ class _DetailPageState extends State<DetailPage> {
               ),
               const SizedBox(height: 20),
               const Text('Mood Chart:'),
-              MoodChart(feelings: widget.item.feelings),
+              SizedBox(
+                height: 200.0, // Bounded height to avoid infinite size issues
+                child: MoodChart(
+                  feelings: widget.item.feelings,
+                  isCompact: false,
+                ),
+              ),
             ],
           ),
         ),
